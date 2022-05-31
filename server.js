@@ -41,14 +41,23 @@ app.post('/', (req, res) => {
 
   const request = https.request(url, options, (response) => {
     response.on('data', (data) => {
-      console.log(JSON.parse(data))
+      const receivedData = JSON.parse(data)
+      if (receivedData.error_count != 0) {
+        res.sendFile(__dirname + '/messages/failure.html')
+      } else {
+        res.sendFile(__dirname + '/messages/success.html')
+      }
     })
   })
   request.write(jsonData)
   request.end()
 })
 
-app.listen(3000, () => {
+app.post('/failure', (req, res) => {
+  res.redirect('/')
+})
+
+app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port 3000')
 })
 
